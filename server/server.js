@@ -13,7 +13,10 @@ dotenv.config();
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+    origin: "https://travelblog-com.onrender.com",
+    credentials: true,
+  }));
 app.use(express.json());
 
 // Connect DB
