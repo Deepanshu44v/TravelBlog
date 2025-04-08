@@ -2,7 +2,7 @@ import axios from 'axios';
 // import dotenv from 'dotenv';
 // dotenv.config();
 const API = axios.create({
-  baseURL: 'https://travelblog-seby.onrender.com/api',
+  baseURL: 'http://localhost:5000/api',
   headers: { 'Content-Type': 'application/json' },
 });
 
