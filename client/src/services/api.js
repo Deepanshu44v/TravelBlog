@@ -1,6 +1,5 @@
 import axios from 'axios';
-// import dotenv from 'dotenv';
-// dotenv.config();
+// import .enc
 const API = axios.create({
   baseURL: 'https://travelblog-seby.onrender.com/api',
   headers: { 'Content-Type': 'application/json' },
