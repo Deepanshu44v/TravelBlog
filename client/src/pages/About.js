@@ -11,7 +11,7 @@ const About = () => {
   <p className="text-xl font-medium text-blue-700 mb-4 text-center">Meet the Creator 💻</p>
   <div className="flex justify-center mb-4">
     <img
-      src="https://i.pravatar.cc/200?img=3" // Replace this with your actual image URL
+      src="../assets/IMG-20250411-WA0002.jpg" // Replace this with your actual image URL
       alt="Site Owner"
       className="w-50 h-50 rounded-full border-4 border-blue-500 shadow-md object-cover"
     />
