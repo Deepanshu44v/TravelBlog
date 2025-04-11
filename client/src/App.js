@@ -22,6 +22,7 @@ import DestinationsDetail from "./pages/DestinationDetail";
 import { ToastContainer } from 'react-toastify';
 import Footer from './components/Footer';
 import NotFound from './pages/NotFound';
+// import { Analytics } from '@vercel/analytics';
 function App() {
   const user = JSON.parse(localStorage.getItem("user"));
 
@@ -113,6 +114,7 @@ function App() {
         />
       </Routes>
       <Footer></Footer>
+      {/* <Analytics /> */}
     </>
   );
 }
