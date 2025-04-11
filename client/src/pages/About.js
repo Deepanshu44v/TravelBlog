@@ -1,5 +1,5 @@
 import React from "react";
-
+import rishab from "../assets/Rishab.png"
 const About = () => {
   return (
     <div className="bg-gradient-to-br mt-5 from-blue-50 to-white py-16 px-6 md:px-20 min-h-screen">
@@ -10,8 +10,9 @@ const About = () => {
         <div className="mt-14 bg-blue-100 border-l-4 border-blue-500 p-6 rounded-lg shadow">
   <p className="text-xl font-medium text-blue-700 mb-4 text-center">Meet the Creator 💻</p>
   <div className="flex justify-center mb-4">
+    {/* <a href="../assets/IMG-20250411-WA0002.jpg"></a> */}
     <img
-      src="../assets/IMG-20250411-WA0002.jpg" // Replace this with your actual image URL
+      src={rishab} // Replace this with your actual image URL
       alt="Site Owner"
       className="w-50 h-50 rounded-full border-4 border-blue-500 shadow-md object-cover"
     />
