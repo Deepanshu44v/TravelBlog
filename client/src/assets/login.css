@@ -1,0 +1,25 @@
+/* in your global CSS or Tailwind config if using custom animations */
+@keyframes bounce-in {
+    0% {
+      opacity: 0;
+      transform: scale(0.9) translateY(-30px);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+  
+  .animate-bounce-in {
+    animation: bounce-in 0.7s ease-out forwards;
+  }
+  
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  .animate-fade-in {
+    animation: fade-in 1s ease-in forwards;
+  }
+  

@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { toast } from "react-toastify";
+import { sendContactMessage } from "../services/userContactService"; // 👈 your contact service
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -14,12 +16,16 @@ const Contact = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // In real projects, send this to backend or an email service
-    console.log("Form Submitted:", formData);
-    alert("Message sent! We'll get back to you soon.");
-    setFormData({ name: "", email: "", message: "" });
+    try {
+      await sendContactMessage(formData);
+      toast.success("Message sent! We'll get back to you soon 😊");
+      setFormData({ name: "", email: "", message: "" });
+    } catch (err) {
+      console.error(err);
+      toast.error("Something went wrong. Please try again 😔");
+    }
   };
 
   return (

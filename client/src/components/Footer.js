@@ -7,7 +7,7 @@ const Footer = () => {
       <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
         {/* Logo & Description */}
         <div>
-          <h2 className="text-2xl font-bold text-green-400 mb-2">TravelBlog 🌍</h2>
+          <h2 className="text-2xl font-bold text-green-400 mb-2">Budget Travelling 🌍</h2>
           <p className="text-sm text-gray-300">
             Explore the world through our travel stories and guides. Adventure awaits!
           </p>
@@ -41,7 +41,7 @@ const Footer = () => {
 
       {/* Bottom Line */}
       <div className="border-t border-gray-700 mt-10 pt-4 text-center text-sm text-gray-400">
-        &copy; {new Date().getFullYear()} TravelBlog. All rights reserved.
+        &copy; {new Date().getFullYear()} BudgetTravelling.com. All rights reserved.
       </div>
     </footer>
   );

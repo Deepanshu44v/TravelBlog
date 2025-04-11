@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import LatestBlogs from "../components/LatestBlogs";
 import LatestDestination from "../components/LatestDestination";
 import SocialSidebar from "../components/SocialSideBar";
+import Contact from "../pages/Contact";
 const images = [
   "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1500&q=80",
   "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1500&q=80",
@@ -97,17 +98,7 @@ const Home = () => {
           </a>
         </div>
       </div>
-      <h1 className="text-4xl font-bold text-center text-blue-800 mb-4">
-        Get in Touch with Us 📬
-      </h1>
-      <p className="text-center text-gray-600">
-        Have questions? We’re here to help. Fill out the form below or head over
-        to our{" "}
-        <Link to="/contact" className="text-blue-500 underline">
-          Contact page
-        </Link>
-        .
-      </p>
+      <Contact></Contact>
     </div>
   );
 };

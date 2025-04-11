@@ -21,6 +21,7 @@ import BlogDetail from "./pages/BlogDetail";
 import DestinationsDetail from "./pages/DestinationDetail";
 import { ToastContainer } from 'react-toastify';
 import Footer from './components/Footer';
+import NotFound from './pages/NotFound';
 function App() {
   const user = JSON.parse(localStorage.getItem("user"));
 
@@ -102,6 +103,12 @@ function App() {
             <ProtectedRoute allowedRoles={['admin']}>
               <DestinationManagement />
             </ProtectedRoute>
+          }
+        />
+        <Route
+          path="*"
+          element={
+           <NotFound/>
           }
         />
       </Routes>

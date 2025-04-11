@@ -8,6 +8,7 @@ const blogRoutes = require("./routes/adminblogRoutes");
 const userRoutes = require("./routes/adminRoutes");
 const publicBlogRoutes = require("./routes/userblogRoutes");
 const publicDestinationRoutes = require("./routes/userdestination");
+const contactRoutes = require("./routes/contactRoutes");
 dotenv.config();
 
 const app = express();
@@ -15,7 +16,7 @@ const app = express();
 // Middleware
 app.use(
   cors({
-    origin: "https://travel-blog-ashen.vercel.app",
+    origin: "http://localhost:3000",
     credentials: true,
   })
 );
@@ -34,6 +35,6 @@ app.use("/api/user/blogs", publicBlogRoutes);
 app.use("/api/user/destinations", publicDestinationRoutes);
 // app.use("/api/user/blogs", publicBlogRoutes);
 // app.use("/api/user/destinations", publicDestinationRoutes);
-
+app.use("/api/contact", contactRoutes); // Contact form routes
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

@@ -21,7 +21,7 @@ const Navbar = () => {
   return (
     <nav className="bg-white shadow-md fixed w-full top-0 z-50" role="navigation">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-        <Link to="/" className="text-2xl font-bold text-yellow-500">Rishab</Link>
+        <Link to="/" className="text-2xl font-bold text-yellow-500">Budget Travelling</Link>
 
         {/* Desktop Menu */}
         <div className="hidden md:flex gap-6 items-center">
