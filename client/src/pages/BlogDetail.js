@@ -58,6 +58,7 @@ const BlogDetail = () => {
       setBlog(updatedBlog);
   
       // Update the "hasLiked" state
+      console.log(updatedBlog.likes.includes(userId))
       setHasLiked(updatedBlog.likes.includes(userId));
   
       toast.success(userId ? "Liked blog!" : "Liked blog anonymously!");
