@@ -31,28 +31,40 @@ const getDestinationById = async (req, res) => {
 // ✅ Like/Unlike destination
 const likeDestination = async (req, res) => {
   try {
+    const userId = req.body.userId;  // Get userId from the request body
     const destinationId = req.params.id;
-    const userId = req.user.id;
-
+    console.log(userId);
+    console.log(destinationId)
+    // Fetch the destination from the database
     const destination = await Destination.findById(destinationId);
     if (!destination) {
       return res.status(404).json({ message: "Destination not found" });
     }
 
-    const hasLiked = destination.likes.includes(userId);
-
-    if (hasLiked) {
-      // Unlike
-      destination.likes = destination.likes.filter((id) => id.toString() !== userId);
+    // Handle anonymous likes (for guests)
+    if (!userId) {
+      // Check if the destination already has an anonymous like, increase count
+      destination.anonymousLikes = (destination.anonymousLikes || 0) + 1;
     } else {
-      // Like
-      destination.likes.push(userId);
+      // Handle logged-in user likes
+      const hasLiked = destination.likes.includes(userId);
+
+      if (hasLiked) {
+        // Unlike
+        destination.likes = destination.likes.filter((id) => id.toString() !== userId);
+      } else {
+        // Like
+        destination.likes.push(userId);
+      }
     }
 
+    // Save the updated destination
     await destination.save();
+
+    // Respond with the updated destination object
     res.status(200).json(destination);
   } catch (error) {
-    console.error("Like toggle failed:", error);
+    console.error("Error liking destination:", error);
     res.status(500).json({ message: "Server error" });
   }
 };

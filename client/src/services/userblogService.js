@@ -10,13 +10,18 @@ export const getBlogById = async (id) => {
   return res.data;
 };
 // Like a blog
-export const likeBlog = async (blogId, token) => {
-  const res = await API.post(`/user/blogs/like/${blogId}`, {}, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
-  return res.data;
+export const likeBlog = async (blogId, userId) => {
+  try {
+    // Assuming API is an axios instance or similar HTTP client
+    // console.log(userId)
+    // const userId = localStorage.getItem('user')?.id || null;
+    const res = await API.post(`/user/blogs/like/${blogId}`, { userId });
+    return res.data;
+  } catch (err) {
+    console.error("Error liking blog:", err);
+    // Optionally, rethrow the error or handle it as needed
+    // throw new Error("Failed to like the blog.");
+  }
 };
 
 // Comment on a blog

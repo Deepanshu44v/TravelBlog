@@ -8,7 +8,8 @@ import {
 } from "../services/userdestinationService";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 const DestinationDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -23,26 +24,24 @@ const DestinationDetail = () => {
   const user = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
-    const fetchDestination = async () => {
+    const fetchData = async () => {
       try {
         const res = await getDestinationById(id);
         setDestination(res);
-        setHasLiked(res.likes.includes(user?._id));
-      } catch (err) {
+        if (user) setHasLiked(res.likes.includes(user._id));
+      } catch {
         toast.error("Failed to fetch destination");
       } finally {
         setLoading(false);
       }
     };
-
-    if (id) fetchDestination();
-  }, [id]);
+    if (id) fetchData();
+  }, [id, user]);
 
   useEffect(() => {
     if (showComments) {
       setTimeout(() => {
-        const el = document.getElementById("comments-section");
-        el?.scrollIntoView({ behavior: "smooth" });
+        document.getElementById("comments-section")?.scrollIntoView({ behavior: "smooth" });
       }, 100);
     }
   }, [showComments]);
@@ -50,32 +49,36 @@ const DestinationDetail = () => {
   const handleLike = async () => {
     if (isLiking) return;
     setIsLiking(true);
+    const userId = user?.id;
     try {
-      setHasLiked((prev) => !prev);
-      setDestination((prev) => ({
-        ...prev,
-        likes: hasLiked
-          ? prev.likes.filter((id) => id !== user._id)
-          : [...prev.likes, user._id],
-      }));
-      await likeDestination(id, user.token);
-    } catch (err) {
-      toast.error("Error liking destination");
+      if (userId) {
+             await likeDestination (id, userId, user.token);
+           } else {
+             await likeDestination(id);  // Anonymous like
+           } 
+      // await likeDestination(id, userId, user.token);
+      const updated = await getDestinationById(id);
+      setDestination(updated);
+      setHasLiked(updated.likes.includes(userId));
+      toast.success(user ? "Liked!" : "Liked anonymously!");
+    } catch {
+      toast.error("Failed to like destination");
     } finally {
       setIsLiking(false);
     }
   };
 
   const handleComment = async () => {
+    if (!user) return toast.error("Please login to comment.");
     if (!comment.trim()) return;
     try {
       await commentOnDestination(id, comment, user.token);
-      toast.success("Comment added");
       setComment("");
       const updated = await getDestinationById(id);
       setDestination(updated);
-    } catch (err) {
-      toast.error("Error adding comment");
+      toast.success("Comment added!");
+    } catch {
+      toast.error("Failed to post comment");
     }
   };
 
@@ -84,12 +87,12 @@ const DestinationDetail = () => {
     if (!replyText?.trim()) return;
     try {
       await replyToDestinationComment(id, commentId, replyText, user.token);
-      toast.success("Reply added");
       const updated = await getDestinationById(id);
       setDestination(updated);
       setReplyInputs((prev) => ({ ...prev, [commentId]: "" }));
-    } catch (err) {
-      toast.error("Error replying to comment");
+      toast.success("Reply added!");
+    } catch {
+      toast.error("Failed to post reply");
     }
   };
 
@@ -98,126 +101,121 @@ const DestinationDetail = () => {
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-10">
-      <div className="bg-white shadow-lg rounded-lg overflow-hidden">
-        <img
-          src={destination.image}
-          alt={destination.name}
-          className="w-full h-64 object-cover sm:h-72"
-        />
-        <div className="p-4 sm:p-6">
-          <p className="text-sm text-gray-500 mb-3">
-            🗓️ Added on{" "}
-            {new Date(destination.createdAt).toLocaleDateString("en-US", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
+      <div className="bg-white shadow-lg rounded-lg  mt-10 overflow-hidden">
+        <img src={destination.image} width={500} height={500} alt={destination.name} className="object-cover" />
+        <div className="p-6">
+          <p className="text-sm text-gray-500 mb-4">
+            🗓️ Added on {new Date(destination.createdAt).toLocaleDateString("en-US", {
+              year: "numeric", month: "long", day: "numeric"
             })}
           </p>
 
-          <h1 className="text-2xl sm:text-3xl font-bold mb-2 text-gray-800">
-            {destination.name}
-          </h1>
-          <p className="mb-4 text-gray-700">{destination.description}</p>
-          <span className="inline-block bg-gray-200 text-gray-800 px-3 py-1 rounded-full text-sm">
-            📍 {destination.category}
-          </span>
+          <h1 className="text-3xl font-extrabold text-gray-800 mb-4">{destination.name}</h1>
+          <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
+              components={{
+                a: ({ href, children }) => (
+                  <a
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 underline hover:text-blue-800"
+                  >
+                    {children}
+                  </a>
+                ),
+              }}
+            >
+              {destination.description}
+            </ReactMarkdown>
 
-          <div className="flex items-center justify-between text-sm text-gray-500 mt-6 mb-2">
-            <span>👍 {destination.likes?.length || 0}</span>
-            <span>💬 {destination.comments?.length || 0} Comments</span>
+          <div className="mb-4 text-sm text-gray-600">
+            📍 <span className="bg-gray-200 px-3 py-1 rounded-full">{destination.category}</span>
           </div>
 
-          {user ? (
-            <div className="mt-4">
-              <div className="flex flex-col sm:flex-row gap-4 mb-4">
-                <button
-                  onClick={handleLike}
-                  className={`px-4 py-1 rounded text-white ${
-                    hasLiked
-                      ? "bg-red-500 hover:bg-red-600"
-                      : "bg-blue-500 hover:bg-blue-600"
-                  }`}
-                >
-                  {hasLiked ? "👎 Unlike" : "👍 Like"}
-                </button>
-                <button
-                  onClick={() => setShowComments(!showComments)}
-                  className="px-4 py-1 rounded bg-green-500 hover:bg-green-600 text-white"
-                >
-                  💬 {showComments ? "Hide" : "Comment"}
-                </button>
-              </div>
+          <div className="flex justify-between text-sm text-gray-500 mb-4">
+            <span>👍 {destination.likes.length + (destination.anonymousLikes || 0)}</span>
+            <span>💬 {destination.comments.length}</span>
+          </div>
 
-              {showComments && (
-                <div id="comments-section">
-                  <div className="mb-4">
-                    <textarea
-                      value={comment}
-                      onChange={(e) => setComment(e.target.value)}
-                      placeholder="Write a comment..."
-                      className="w-full border border-gray-300 rounded p-2"
-                      rows="3"
-                    ></textarea>
-                    <button
-                      onClick={handleComment}
-                      className="mt-2 bg-green-500 text-white px-4 py-1 rounded hover:bg-green-600"
-                    >
-                      💬 Submit Comment
-                    </button>
-                  </div>
+          <div className="flex gap-4 mb-6">
+            <button
+              onClick={handleLike}
+              disabled={isLiking}
+              className={`px-4 py-1 rounded text-white transition ${
+                hasLiked ? "bg-red-500 hover:bg-red-600" : "bg-blue-500 hover:bg-blue-600"
+              }`}
+            >
+              {hasLiked ? "👎 Unlike" : "👍 Like"}
+            </button>
+            <button
+              onClick={() => setShowComments(!showComments)}
+              className="px-4 py-1 rounded bg-green-500 hover:bg-green-600 text-white"
+            >
+              💬 {showComments ? "Hide" : "Comment"}
+            </button>
+          </div>
 
-                  <div className="mt-4">
-                    <h3 className="text-lg font-semibold mb-2">Comments:</h3>
-                    {destination.comments?.map((c) => (
-                      <div
-                        key={c._id}
-                        className="border-b border-gray-200 py-2 text-gray-700"
-                      >
-                        <p className="font-semibold">
-                          {c.user?.username || "Anonymous"}:
-                        </p>
-                        <p className="ml-2">{c.text}</p>
-                        <div className="text-xs text-gray-500 ml-2 mb-1">
-                          {new Date(c.createdAt).toLocaleDateString()}
-                        </div>
-
-                        {c.replies?.map((r) => (
-                          <div
-                            key={r._id}
-                            className="ml-6 mt-1 text-sm text-gray-600 border-l-2 pl-2"
-                          >
-                            ↳ <strong>{r.user?.username || "Anonymous"}</strong>:{" "}
-                            {r.text}
-                          </div>
-                        ))}
-
-                        <div className="ml-4 mt-2">
-                          <input
-                            type="text"
-                            placeholder="Write a reply..."
-                            className="border border-gray-300 px-2 py-1 rounded text-sm w-full"
-                            value={replyInputs[c._id] || ""}
-                            onChange={(e) =>
-                              setReplyInputs((prev) => ({
-                                ...prev,
-                                [c._id]: e.target.value,
-                              }))
-                            }
-                          />
-                          <button
-                            onClick={() => handleReply(c._id)}
-                            className="mt-1 bg-blue-500 text-white px-3 py-1 text-sm rounded hover:bg-blue-600"
-                          >
-                            ↩️ Reply
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+          {showComments && (
+            <div id="comments-section">
+              {user && (
+                <div className="mb-4">
+                  <textarea
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                    placeholder="Write a comment..."
+                    className="w-full border border-gray-300 rounded p-2"
+                    rows={3}
+                  ></textarea>
+                  <button
+                    onClick={handleComment}
+                    className="mt-2 bg-green-500 text-white px-4 py-1 rounded hover:bg-green-600"
+                  >
+                    💬 Submit Comment
+                  </button>
                 </div>
               )}
+
+              <div>
+                <h3 className="text-lg font-semibold mb-3">Comments:</h3>
+                {destination.comments.map((c) => (
+                  <div key={c._id} className="border-b py-3">
+                    <p className="font-semibold">{c.user?.username || "Anonymous"}:</p>
+                    <p className="ml-2">{c.text}</p>
+                    <div className="text-xs text-gray-500 ml-2 mb-2">
+                      {new Date(c.createdAt).toLocaleDateString()}
+                    </div>
+
+                    {c.replies?.map((r) => (
+                      <div key={r._id} className="ml-6 pl-2 border-l text-sm text-gray-600">
+                        ↳ <strong>{r.user?.username || "Anonymous"}</strong>: {r.text}
+                      </div>
+                    ))}
+
+                    {user && (
+                      <div className="ml-4 mt-2">
+                        <input
+                          type="text"
+                          value={replyInputs[c._id] || ""}
+                          onChange={(e) => setReplyInputs({ ...replyInputs, [c._id]: e.target.value })}
+                          placeholder="Write a reply..."
+                          className="w-full border border-gray-300 rounded p-1 text-sm"
+                        />
+                        <button
+                          onClick={() => handleReply(c._id)}
+                          className="mt-1 bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600"
+                        >
+                          ↩️ Reply
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
-          ) : (
+          )}
+
+          {!user && (
             <p className="text-sm text-gray-500 mt-6">
               Please{" "}
               <span
@@ -226,7 +224,7 @@ const DestinationDetail = () => {
               >
                 login
               </span>{" "}
-              to like and comment on this destination.
+              to comment on this destination.
             </p>
           )}
         </div>

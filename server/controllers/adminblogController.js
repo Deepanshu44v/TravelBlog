@@ -5,56 +5,93 @@ const cloudinary = require("../utils/cloudinary");
 // 🚀 Get all blogs
 // 🔥 Create Blog
 const createBlog = async (req, res) => {
-    try {
-      const { title, description, category } = req.body;
-      const file = req.file;
-  
-      if (!file) {
-        return res.status(400).json({ message: "No image provided" });
-      }
-  
-      const streamUpload = () =>
-        new Promise((resolve, reject) => {
-          const stream = cloudinary.uploader.upload_stream(
-            { folder: "travel-blogs" },
-            (error, result) => {
-              if (error) reject(error);
-              else resolve(result);
-            }
-          );
-          streamifier.createReadStream(file.buffer).pipe(stream);
-        });
-  
-      const result = await streamUpload();
-  
-      const blog = new Blog({
-        title,
-        description,
-        category,
-        image: result.secure_url,
-        createdBy: req.user.id,
+  try {
+    const { title, description, category } = req.body;
+    const file = req.file;
+
+    if (!file) {
+      return res.status(400).json({ message: "No main image provided" });
+    }
+
+    // Function to upload using stream
+    const streamUpload = () =>
+      new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          { folder: "travel-blogs" },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        );
+        streamifier.createReadStream(file.buffer).pipe(stream);
       });
-  
-      await blog.save();
-      res.status(201).json({ message: "Blog created successfully", blog });
-    } catch (err) {
-      console.error("Create Blog Error:", err);
-      res.status(500).json({ message: "Server Error" });
+
+    const result = await streamUpload(); // Upload the main image
+
+    const blog = new Blog({
+      title,
+      description,
+      category,
+      image: result.secure_url, // Cloudinary image URL
+      createdBy: req.user.id, // User ID from authenticated user
+    });
+
+    await blog.save();
+
+    res.status(201).json({ message: "Blog created successfully", blog });
+  } catch (err) {
+    console.error("Create Blog Error:", err);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+const uploadBlogImage = async (req, res) => {
+  try {
+    const file = req.file;
+
+    if (!file) {
+      return res.status(400).json({ message: "No image file provided" });
     }
-  };
-  
-  const getAllBlogs = async (req, res) => {
-    try {
-      const blogs = await Blog.find()
-        .populate("createdBy", "name email role")
-        .populate("likes", "name email") // Optional: to show who liked
-        .populate("comments.user", "username"); // Optional: who commented
-        // console.log(blogs);
-      res.json(blogs);
-    } catch (err) {
-      res.status(500).json({ message: "Failed to fetch blogs" });
-    }
-  };
+
+    const streamUpload = () =>
+      new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          { folder: "travel-blogs/description-images" }, // Separate folder if you want
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        );
+        streamifier.createReadStream(file.buffer).pipe(stream);
+      });
+
+    const result = await streamUpload();
+
+    res.status(200).json({
+      message: "Image uploaded successfully",
+      url: result.secure_url,
+    });
+  } catch (error) {
+    console.error("Upload Blog Image Error:", error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+// module.exports = { uploadBlogImage };
+
+// module.exports = { createBlog };
+
+const getAllBlogs = async (req, res) => {
+  try {
+    const blogs = await Blog.find()
+      .populate("createdBy", "name email role")
+      .populate("likes", "name email") // Optional: to show who liked
+      .populate("comments.user", "username"); // Optional: who commented
+    // console.log(blogs);
+    res.json(blogs);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch blogs" });
+  }
+};
 // 🚀 Update blog
 const updateBlog = async (req, res) => {
   try {
@@ -168,7 +205,7 @@ const addReplyToComment = async (req, res) => {
 
     comment.replies.push({
       user: req.user._id,
-      text
+      text,
     });
 
     await blog.save();
@@ -183,7 +220,6 @@ const addReplyToComment = async (req, res) => {
   }
 };
 
-
 module.exports = {
   createBlog,
   getAllBlogs,
@@ -192,6 +228,6 @@ module.exports = {
   getBlogById,
   deleteCommentFromBlog,
   getBlogById,
-  addReplyToComment
-
+  addReplyToComment,
+  uploadBlogImage,
 };

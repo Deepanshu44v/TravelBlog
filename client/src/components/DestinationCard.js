@@ -5,7 +5,7 @@ const DestinationCard = ({ destination }) => (
     <img
       src={destination.image}
       alt={destination.name}
-      className="h-48 w-full object-cover sm:h-56 md:h-48 lg:h-56"
+      className="object-cover sm:h-56 md:h-48 lg:h-90"
     />
     <div className="p-4 flex flex-col flex-grow">
       <h3 className="text-lg md:text-xl font-semibold text-gray-800 mb-2">
@@ -23,7 +23,7 @@ const DestinationCard = ({ destination }) => (
         {destination.description}
       </p>
       <div className="flex justify-between text-gray-500 text-sm mb-4">
-        <span>👍 {destination.likes?.length || 0}</span>
+        <span>👍 {destination.likes?.length +  destination.anonymousLikes|| 0}</span>
         <span>💬 {destination.comments?.length || 0}</span>
       </div>
       <Link

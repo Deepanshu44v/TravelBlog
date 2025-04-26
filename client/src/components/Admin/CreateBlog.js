@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { createBlog } from "../../services/adminblogService";
+import { createBlog, uploadBlogImage } from "../../services/adminblogService"; // Make sure you have uploadBlogImage API
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -15,6 +15,37 @@ const CreateBlog = () => {
     const file = e.target.files[0];
     setImage(file);
     setPreview(file ? URL.createObjectURL(file) : null);
+  };
+
+  const handlePaste = async (e) => {
+    const items = e.clipboardData.items;
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].type.indexOf("image") !== -1) {
+        const file = items[i].getAsFile();
+        const formData = new FormData();
+        formData.append("file", file); // IMPORTANT: 'image'
+  
+        try {
+          toast.info("⏳ Uploading pasted image...");
+          const res = await uploadBlogImage(formData);
+  
+          if (res && res.url) {
+            // Insert image markdown
+            const imageMarkdown = `![Uploaded Image](${res.url})\n`;
+            setDescription((prev) => prev + "\n" + imageMarkdown);
+            toast.success("🎉 Image uploaded successfully!");
+          } else {
+            toast.error("❌ Failed to upload pasted image.");
+          }
+        } catch (err) {
+          console.error("Error uploading pasted image:", err);
+          toast.error("❌ Error uploading pasted image.");
+        }
+  
+        e.preventDefault();
+        break;
+      }
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -77,6 +108,7 @@ const CreateBlog = () => {
             className="w-full h-32 px-4 py-2 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-yellow-400"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
+            onPaste={handlePaste} // 🔥 this is added
           />
         </div>
 

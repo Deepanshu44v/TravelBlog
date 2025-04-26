@@ -56,3 +56,18 @@ export const replyToComment = async (blogId, commentId, replyText, token) => {
   );
   return response.data;
 };
+// services/adminblogService.js
+
+export const uploadBlogImage = async (formData) => {
+  try {
+    const response = await API.post("/admin/blogs/upload-blog-image", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data; // Assuming your API instance uses Axios (API.post returns .data)
+  } catch (error) {
+    console.error("Image upload failed:", error);
+    return false;
+  }
+};

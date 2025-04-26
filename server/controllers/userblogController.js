@@ -1,5 +1,5 @@
 const Blog = require("../models/Blogs");
-const { find } = require("../models/User");
+// const { find } = require("../models/User");
 
 // Get all blogs
 const getAllBlogs = async (req, res) => {
@@ -32,29 +32,39 @@ const getBlogById = async (req, res) => {
 // Toggle Like
 const likeBlog = async (req, res) => {
   try {
+    const userId = req.body.userId;  // Get userId from request body
     const blogId = req.params.id;
-    const userId = req.user.id; // Extracted from JWT middleware
 
+    // Fetch the blog from the database
     const blog = await Blog.findById(blogId);
     if (!blog) return res.status(404).json({ message: "Blog not found" });
 
-    const hasLiked = blog.likes.includes(userId);
-
-    if (hasLiked) {
-      // Unlike
-      blog.likes = blog.likes.filter((id) => id.toString() !== userId);
+    // Handle anonymous likes (for guests)
+    if (!userId) {
+      // Check if the blog already has an anonymous like, increase count
+      blog.anonymousLikes = (blog.anonymousLikes || 0) + 1;
     } else {
-      // Like
-      blog.likes.push(userId);
+      // Handle logged-in user likes
+      const hasLiked = blog.likes.includes(userId);
+
+      if (hasLiked) {
+        blog.likes = blog.likes.filter((id) => id.toString() !== userId);  // Remove like
+      } else {
+        blog.likes.push(userId);  // Add like
+      }
     }
 
+    // Save the updated blog
     await blog.save();
-    res.status(200).json(blog); // Return updated blog
+
+    // Respond with the updated blog object
+    res.status(200).json(blog);
   } catch (error) {
-    console.error("Like toggle failed:", error);
+    console.error("Error liking blog:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
+
 // Add Comment
 const commentOnBlog = async (req, res) => {
   const blogId = req.params.id;
@@ -117,7 +127,9 @@ const getLatestBlogs = async (req, res) => {
     const oneWeekAgo = new Date();
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
-    const latestBlogs = await Blog.find({ createdAt: { $gte: oneWeekAgo } }).sort({ createdAt: -1 });
+    const latestBlogs = await Blog.find({
+      createdAt: { $gte: oneWeekAgo },
+    }).sort({ createdAt: -1 });
     res.status(200).json(latestBlogs);
   } catch (err) {
     res.status(500).json({ message: "Error fetching latest blogs" });

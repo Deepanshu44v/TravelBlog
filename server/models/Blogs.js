@@ -65,11 +65,17 @@ const blogSchema = new mongoose.Schema({
       ref: "User",
     },
   ],
+  anonymousLikes: {
+    type: Number,
+    default: 0,  // Track anonymous likes separately
+  },
   comments: [commentSchema],
   createdAt: {
     type: Date,
     default: Date.now,
   },
 });
+
+
 
 module.exports = mongoose.model("Blog", blogSchema);

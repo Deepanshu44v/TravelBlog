@@ -15,7 +15,7 @@ router.get("/", getAllDestinations); // All destinations
 router.get("/:id", getDestinationById); // Destination by ID
 
 // Like destination
-router.post("/like/:id", protect, likeDestination);
+router.post("/like/:id", likeDestination);
 
 // Comment on destination
 router.post("/comment/:id", protect, commentOnDestination);

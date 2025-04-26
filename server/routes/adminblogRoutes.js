@@ -10,6 +10,7 @@ const {
   getBlogById,
   deleteCommentFromBlog,
   addReplyToComment,
+  uploadBlogImage,
 } = require("../controllers/adminblogController");
 
 // Create Blog (Already done)
@@ -45,4 +46,6 @@ router.post(
 );
 
 router.get("/:id", protect, authorizeRoles("admin"), getBlogById); // Optional: to get a blog by ID
+
+router.post("/upload-blog-image",protect,authorizeRoles("admin"),upload.single("file"),uploadBlogImage);
 module.exports = router;
