@@ -78,7 +78,7 @@ const DestinationManagement = () => {
                   {dest.name}
                 </h3>
                 <p className="text-sm text-gray-600 mt-1">
-                  🧭 {dest.category} | ❤️ {dest.likes?.length || 0} Likes | 💬{" "}
+                  🧭 {dest.category} | ❤️ {dest.likes?.length  + destinations.anonymousLikes|| 0} Likes | 💬{" "}
                   {dest.comments?.length || 0} Comments
                 </p>
                 <div className="flex justify-end gap-3 mt-4">

@@ -73,7 +73,7 @@ const BlogManagement = () => {
                 <h3 className="text-xl font-bold text-gray-800">{blog.title}</h3>
                 <p className="text-sm text-gray-500 mt-1 italic">Category: {blog.category}</p>
                 <div className="mt-2 text-sm text-gray-700">
-                  ❤️ Likes: {blog.likes?.length || 0}
+                  ❤️ Likes: {blog.likes?.length + blog.anonymousLikes || 0}
                 </div>
                 <div className="text-sm text-gray-700">💬 Comments: {blog.comments?.length || 0}</div>
 

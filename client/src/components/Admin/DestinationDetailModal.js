@@ -83,7 +83,7 @@ const DestinationDetailModal = ({ destination: initialDestination, onClose }) =>
 
           <div className="flex flex-wrap gap-3 text-sm sm:text-base text-gray-600 mb-6">
             <span>📂 <strong>Category:</strong> {destination.category}</span>
-            <span>❤️ <strong>Likes:</strong> {destination.likes?.length || 0}</span>
+            <span>❤️ <strong>Likes:</strong> {destination.likes?.length + destination.anonymousLikes || 0}</span>
             <span>💬 <strong>Comments:</strong> {destination.comments?.length || 0}</span>
           </div>
 

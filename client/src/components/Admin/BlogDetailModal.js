@@ -6,6 +6,7 @@ import {
 } from "../../services/adminblogService";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+// import Blogs from "../../../../server/models/Blogs";
 
 const BlogDetailModal = ({ blog: initialBlog, onClose }) => {
   const [blog, setBlog] = useState(initialBlog);
@@ -83,7 +84,7 @@ const BlogDetailModal = ({ blog: initialBlog, onClose }) => {
         {/* 📊 Metadata */}
         <div className="text-sm text-gray-600 mb-6 flex flex-wrap gap-4">
           <span>📂 <strong>Category:</strong> {blog.category}</span>
-          <span>❤️ <strong>Likes:</strong> {blog.likes?.length || 0}</span>
+          <span>❤️ <strong>Likes:</strong> {blog.likes?.length + blog.anonymousLikes || 0}</span>
           <span>💬 <strong>Comments:</strong> {blog.comments?.length || 0}</span>
         </div>
 

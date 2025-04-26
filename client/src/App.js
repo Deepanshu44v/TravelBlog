@@ -24,6 +24,7 @@ import Footer from "./components/Footer";
 import NotFound from "./pages/NotFound";
 import { initGA, logPageView } from "./assets/ga";
 import { useLocation } from "react-router-dom";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 // useEffect
 // import { Analytics } from '@vercel/analytics';
 function App() {
@@ -52,6 +53,7 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/blogs" element={<Blogs />} />
         <Route path="/destinations" element={<Destinations />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/blogs/:id" element={<BlogDetail />} />
         <Route path="/destinations/:id" element={<DestinationsDetail />} />
         {/* Protected Routes */}
