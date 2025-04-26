@@ -5,7 +5,7 @@ const About = () => {
     <div className="bg-gradient-to-br mt-5 from-blue-50 to-white py-16 px-6 md:px-20 min-h-screen">
       <div className="max-w-5xl mx-auto text-center">
         <h1 className="text-4xl md:text-5xl font-extrabold text-blue-800 mb-6">
-          About WanderWrite 🌍✍️
+          About BudgetTravelling 🌍✍️
         </h1>
         <div className="mt-14 bg-blue-100 border-l-4 border-blue-500 p-6 rounded-lg shadow">
   <p className="text-xl font-medium text-blue-700 mb-4 text-center">Meet the Creator 💻</p>
@@ -18,12 +18,12 @@ const About = () => {
     />
   </div>
   <p className="text-center text-gray-700">
-    I'm a passionate travel enthusiast who built <strong>WanderWrite</strong> to
+    I'm a passionate travel enthusiast
     connect people through adventure and storytelling.
   </p>
 </div>
         <p className="text-gray-700 text-lg md:text-xl leading-relaxed mb-10">
-          WanderWrite is a vibrant travel and blogging platform where wanderlust meets storytelling.
+          This is a vibrant travel and blogging platform where wanderlust meets storytelling.
           Whether you're a passionate explorer or a curious reader, our mission is to connect people through
           real travel experiences and captivating blog stories from around the world.
         </p>
