@@ -6,6 +6,8 @@ import {
 } from "../../services/adminblogService";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 // import Blogs from "../../../../server/models/Blogs";
 
 const BlogDetailModal = ({ blog: initialBlog, onClose }) => {
@@ -79,7 +81,23 @@ const BlogDetailModal = ({ blog: initialBlog, onClose }) => {
         <h2 className="text-2xl sm:text-3xl font-bold text-blue-800 mb-2">
           {blog.title}
         </h2>
-        <p className="text-gray-700 mb-4 text-sm sm:text-base">{blog.description}</p>
+        <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            components={{
+              a: ({ href, children }) => (
+                <a
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 underline hover:text-blue-800"
+                >
+                  {children}
+                </a>
+              ),
+            }}
+          >
+            {blog.description}
+          </ReactMarkdown>
 
         {/* 📊 Metadata */}
         <div className="text-sm text-gray-600 mb-6 flex flex-wrap gap-4">

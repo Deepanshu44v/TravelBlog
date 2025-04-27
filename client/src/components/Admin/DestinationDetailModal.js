@@ -6,6 +6,8 @@ import {
 } from "../../services/admindestinationService";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 const DestinationDetailModal = ({ destination: initialDestination, onClose }) => {
   const [destination, setDestination] = useState(initialDestination);
@@ -77,9 +79,23 @@ const DestinationDetailModal = ({ destination: initialDestination, onClose }) =>
           <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-green-800 mb-2">
             {destination.name}
           </h2>
-          <p className="text-gray-700 text-sm sm:text-base mb-4">
-            {destination.description}
-          </p>
+          <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
+              components={{
+                a: ({ href, children }) => (
+                  <a
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 underline hover:text-blue-800"
+                  >
+                    {children}
+                  </a>
+                ),
+              }}
+            >
+              {destination.description}
+            </ReactMarkdown>
 
           <div className="flex flex-wrap gap-3 text-sm sm:text-base text-gray-600 mb-6">
             <span>📂 <strong>Category:</strong> {destination.category}</span>
